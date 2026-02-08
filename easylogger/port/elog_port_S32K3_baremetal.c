@@ -22,7 +22,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * Function: Portable interface for each platform.
+ * Function: Portable interface for S32K3 platform.
  * Created on: 2015-04-28
  */
  
