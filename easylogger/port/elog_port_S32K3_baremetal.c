@@ -26,7 +26,12 @@
  * Created on: 2015-04-28
  */
  
-#include <elog.h>
+#include "elog.h"
+#include <stdio.h>
+#if defined (CPU_S32K324)
+#include "S32K324_COMMON.h"
+#endif
+#include "core_cm7.h"
 
 /**
  * EasyLogger port initialize
@@ -36,8 +41,6 @@
 ElogErrCode elog_port_init(void) {
     ElogErrCode result = ELOG_NO_ERR;
 
-    /* add your code here */
-    
     return result;
 }
 
@@ -58,27 +61,23 @@ void elog_port_deinit(void) {
  * @param size log size
  */
 void elog_port_output(const char *log, size_t size) {
-    
-    /* add your code here */
-    
+    /* output to terminal */
+    printf("%.*s", size, log);
+    //TODO output to flash
 }
 
 /**
  * output lock
  */
 void elog_port_output_lock(void) {
-    
-    /* add your code here */
-    
+    __disable_irq();
 }
 
 /**
  * output unlock
  */
 void elog_port_output_unlock(void) {
-    
-    /* add your code here */
-    
+    __enable_irq();
 }
 
 /**
@@ -87,9 +86,7 @@ void elog_port_output_unlock(void) {
  * @return current time
  */
 const char *elog_port_get_time(void) {
-    
-    /* add your code here */
-    
+    return "10:08:12";
 }
 
 /**
@@ -98,9 +95,7 @@ const char *elog_port_get_time(void) {
  * @return current process name
  */
 const char *elog_port_get_p_info(void) {
-    
-    /* add your code here */
-    
+    return "pid:1008";
 }
 
 /**
@@ -109,7 +104,5 @@ const char *elog_port_get_p_info(void) {
  * @return current thread name
  */
 const char *elog_port_get_t_info(void) {
-    
-    /* add your code here */
-    
+    return "tid:24";
 }

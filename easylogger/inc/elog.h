@@ -62,10 +62,10 @@ extern "C" {
     if (!(EXPR))                                                              \
     {                                                                         \
         if (elog_assert_hook == NULL) {                                       \
-            elog_a("elog", "(%s) has assert failed at %s:%ld.", #EXPR, __FUNCTION__, __LINE__); \
+            elog_a("elog", "(%s) has assert failed at %s:%ld.", #EXPR, __func__, __LINE__); \
             while (1);                                                        \
         } else {                                                              \
-            elog_assert_hook(#EXPR, __FUNCTION__, __LINE__);                  \
+            elog_assert_hook(#EXPR, __func__, __LINE__);                  \
         }                                                                     \
     }
 #else
@@ -83,7 +83,7 @@ extern "C" {
 #else /* ELOG_OUTPUT_ENABLE */
 
     #ifdef ELOG_FMT_USING_FUNC
-    #define ELOG_OUTPUT_FUNC __FUNCTION__
+    #define ELOG_OUTPUT_FUNC __func__
     #else
     #define ELOG_OUTPUT_FUNC NULL
     #endif
