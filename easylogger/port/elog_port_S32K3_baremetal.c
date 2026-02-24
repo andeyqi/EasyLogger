@@ -37,6 +37,9 @@
 #endif
 #include "core_cm7.h"
 
+#if defined (CFG_EASY_LOGGER_TERMINAL_UART)
+#include "Lpuart_Uart_Ip.h"
+#endif
 /**
  * EasyLogger port initialize
  *
@@ -65,8 +68,16 @@ void elog_port_deinit(void) {
  * @param size log size
  */
 void elog_port_output(const char *log, size_t size) {
+#if defined (CFG_EASY_LOGGER_TERMINAL_UART)
+    for(unsigned int i = 0; i < size; i++)
+    {
+        while((CFG_EASY_LOGGER_TERMINAL_UART->STAT & LPUART_STAT_TC_MASK)>>LPUART_STAT_TC_SHIFT==0);
+        CFG_EASY_LOGGER_TERMINAL_UART->DATA = log[i];
+    }
+#else
     /* output to terminal */
     printf("%.*s", size, log);
+#endif
     //TODO output to flash
 }
 

@@ -28,7 +28,7 @@
 
 #ifndef _ELOG_CFG_H_
 #define _ELOG_CFG_H_
-
+/*---------------------------------------------------------------------------*/
 /* enable log output. default open this macro */
 #define ELOG_OUTPUT_ENABLE
 /* setting static output log level */
@@ -47,5 +47,21 @@
 #define ELOG_FILTER_TAG_LVL_MAX_NUM          5
 /* output newline sign */
 #define ELOG_NEWLINE_SIGN                    "\r\n"
+/*---------------------------------------------------------------------------*/
+/* enable log color */
+#define ELOG_COLOR_ENABLE
+/* change the some level logs to not default color if you want */
+#define ELOG_COLOR_ASSERT                        (F_MAGENTA B_NULL S_NORMAL)
+#define ELOG_COLOR_ERROR                         (F_RED B_NULL S_NORMAL)
+#define ELOG_COLOR_WARN                          (F_YELLOW B_NULL S_NORMAL)
+#define ELOG_COLOR_INFO                          (F_CYAN B_NULL S_NORMAL)
+#define ELOG_COLOR_DEBUG                         (F_GREEN B_NULL S_NORMAL)
+#define ELOG_COLOR_VERBOSE                       (F_BLUE B_NULL S_NORMAL)
+/*---------------------------------------------------------------------------*/
+/* enable log fmt */
+/* comment it if you don't want to output them at all */
+#define ELOG_FMT_USING_FUNC
+#define ELOG_FMT_USING_DIR
+#define ELOG_FMT_USING_LINE
 
 #endif /* _ELOG_CFG_H_ */
