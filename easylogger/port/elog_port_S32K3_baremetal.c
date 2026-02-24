@@ -30,6 +30,10 @@
 #include <stdio.h>
 #if defined (CPU_S32K324)
 #include "S32K324_COMMON.h"
+#elif defined (CPU_S32K312)
+#include "S32K312_COMMON.h"
+#else
+#error "Need add S32K3XX_COMMON.h"
 #endif
 #include "core_cm7.h"
 
