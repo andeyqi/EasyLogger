@@ -28,18 +28,18 @@
  
 #include "elog.h"
 #include <stdio.h>
-#if defined (CPU_S32K324)
-#include "S32K324_COMMON.h"
-#elif defined (CPU_S32K312)
-#include "S32K312_COMMON.h"
-#else
-#error "Need add S32K3XX_COMMON.h"
-#endif
-#include "core_cm7.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 
 #if defined (CFG_EASY_LOGGER_TERMINAL_UART)
 #include "Lpuart_Uart_Ip.h"
 #endif
+
+/********************************************************************************************************
+ *                                  Private Variable Definitions                                        *
+ *******************************************************************************************************/
+static SemaphoreHandle_t output_lock;
+
 /**
  * EasyLogger port initialize
  *
@@ -47,7 +47,7 @@
  */
 ElogErrCode elog_port_init(void) {
     ElogErrCode result = ELOG_NO_ERR;
-
+    output_lock = xSemaphoreCreateMutex();
     return result;
 }
 
@@ -85,14 +85,16 @@ void elog_port_output(const char *log, size_t size) {
  * output lock
  */
 void elog_port_output_lock(void) {
-    __disable_irq();
+    //__disable_irq();
+    xSemaphoreTake(output_lock, portMAX_DELAY);
 }
 
 /**
  * output unlock
  */
 void elog_port_output_unlock(void) {
-    __enable_irq();
+    //__enable_irq();
+    xSemaphoreGive(output_lock);
 }
 
 /**
@@ -101,7 +103,9 @@ void elog_port_output_unlock(void) {
  * @return current time
  */
 const char *elog_port_get_time(void) {
-    return "10:08:12";
+    static char cur_system_time[16] = "";
+    snprintf(cur_system_time, 16, "%lu", xTaskGetTickCount());
+    return cur_system_time;
 }
 
 /**
