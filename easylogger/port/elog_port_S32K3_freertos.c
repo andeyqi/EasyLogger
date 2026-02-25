@@ -40,6 +40,12 @@
  *******************************************************************************************************/
 static SemaphoreHandle_t output_lock;
 
+#ifdef ELOG_ASYNC_OUTPUT_ENABLE
+static SemaphoreHandle_t output_notice;
+
+static void async_output(void *arg);
+#endif
+
 /**
  * EasyLogger port initialize
  *
@@ -48,6 +54,10 @@ static SemaphoreHandle_t output_lock;
 ElogErrCode elog_port_init(void) {
     ElogErrCode result = ELOG_NO_ERR;
     output_lock = xSemaphoreCreateMutex();
+
+#ifdef ELOG_ASYNC_OUTPUT_ENABLE
+    output_notice = xSemaphoreCreateMutex();
+#endif
     return result;
 }
 
@@ -125,3 +135,17 @@ const char *elog_port_get_p_info(void) {
 const char *elog_port_get_t_info(void) {
     return "tid:24";
 }
+
+
+#ifdef ELOG_ASYNC_OUTPUT_ENABLE
+
+void elog_async_output_notice(void) {
+
+}
+
+
+static void async_output(void *arg) {
+
+}
+
+#endif
