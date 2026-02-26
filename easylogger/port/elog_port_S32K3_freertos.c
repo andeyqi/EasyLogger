@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "task.h"
 
 #if defined (CFG_EASY_LOGGER_TERMINAL_UART)
 #include "Lpuart_Uart_Ip.h"
@@ -56,7 +57,8 @@ ElogErrCode elog_port_init(void) {
     output_lock = xSemaphoreCreateMutex();
 
 #ifdef ELOG_ASYNC_OUTPUT_ENABLE
-    output_notice = xSemaphoreCreateMutex();
+    output_notice = xSemaphoreCreateCounting(1, 1);
+    xTaskCreate(async_output, "elog_async", 512, NULL, tskIDLE_PRIORITY + 1, NULL);
 #endif
     return result;
 }
@@ -140,12 +142,38 @@ const char *elog_port_get_t_info(void) {
 #ifdef ELOG_ASYNC_OUTPUT_ENABLE
 
 void elog_async_output_notice(void) {
-
+    xSemaphoreGive(output_notice);
 }
 
 
 static void async_output(void *arg) {
+    (void)arg;
+    size_t get_log_size = 0;
 
+#ifdef ELOG_ASYNC_LINE_OUTPUT
+    static char poll_get_buf[ELOG_LINE_BUF_SIZE - 4];
+#else
+    static char poll_get_buf[ELOG_ASYNC_OUTPUT_BUF_SIZE - 4];
+#endif
+
+    for(;;)
+    {
+        /* waiting log */
+        xSemaphoreTake(output_notice, portMAX_DELAY);
+        /* polling gets and outputs the log */
+        while (1) {
+#ifdef ELOG_ASYNC_LINE_OUTPUT
+            get_log_size = elog_async_get_line_log(poll_get_buf, sizeof(poll_get_buf));
+#else
+            get_log_size = elog_async_get_log(poll_get_buf, sizeof(poll_get_buf));
+#endif
+            if (get_log_size) {
+                elog_port_output(poll_get_buf, get_log_size);
+            } else {
+                break;
+            }
+        }
+    }
 }
 
 #endif
