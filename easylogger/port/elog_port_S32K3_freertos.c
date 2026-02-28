@@ -134,8 +134,18 @@ const char *elog_port_get_p_info(void) {
  *
  * @return current thread name
  */
+#if (FREERTOS_PACH_GET_TASK_ID == 1)
+extern uint16_t get_current_task_id(void);
+#endif
+
 const char *elog_port_get_t_info(void) {
-    return "tid:24";
+#if (FREERTOS_PACH_GET_TASK_ID == 1)
+    static char cur_task_id[16] = "";
+    snprintf(cur_task_id, 16, "tid:%u", get_current_task_id());
+    return cur_task_id;
+#else
+    return "tid:1008";
+#endif
 }
 
 
